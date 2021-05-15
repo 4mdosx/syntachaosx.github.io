@@ -1,6 +1,3 @@
-[submodule "workspace/cn-idCard"]
-	path = workspace/cn-idCard
-	url = https://github.com/chaosdogl/cn-idCard
 [submodule "workspace/--force"]
 	path = workspace/--force
 	url = https://github.com/chaosdogl/cn-idCard
