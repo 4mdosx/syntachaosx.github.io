@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Time Zone</title>
+  <link rel=icon href=/public/favicon.ico>
+  <link rel="stylesheet" href="/public/css/primer.css">
+</head>
+
+<body>
+  <h1 class="p-3">Time Zone</h1>
+  <main class="clearfix p-3 border Layout-main mx-auto" style="width: 100vw; max-width: 600px;">
+    <div class="mb-4">
+      <div>Now: <span id="now"></span></div>
+      <div>UTC Now: <span id="utc-now"></span></div>
+    </div>
+    <div>
+      <label for="origin" style="width: 50px; display: inline-block;">From:</label>
+      <input type="text" id="origin-input" name="origin" class="form-control">
+      <select name="region" id="origin-region" class="form-select">
+        <option value="W">West</option>
+        <option value="E">East</option>
+      </select>
+      <select name="zone" id="origin-zone" class="form-select">
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+      </select>
+    </div>
+    </div>
+    <div class="mt-2">
+      <label for="onput" style="width: 50px; display: inline-block;">To:</label>
+      <input type="text" id="onput" name="onput" class="form-control">
+      <select name="region" id="region" class="form-select">
+        <option value="W">West</option>
+        <option value="E">East</option>
+      </select>
+      <select name="zone" id="zone" class="form-select">
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+      </select>
+    </div>
+    <hr>
+    <button class="btn" onclick="run()">Run</button>
+    <hr>
+    <footer>Hits</footer>
+    <ul class="pl-4">
+      <li>Beijing GMT+8</li>
+      <li>UTC GMT+0</li>
+    </ul>
+  </main>
+  <script>
+    function pad(val) {
+      return String(val).padStart(2, '0')
+    }
+
+    function format(timeStamp) {
+      const date = new Date(timeStamp)
+      const year = date.getFullYear()
+      const month = pad(date.getMonth() + 1)
+      const day = pad(date.getDate())
+      const hour = pad(date.getHours())
+      const min = pad(date.getMinutes())
+      const second = pad(date.getSeconds())
+      return `${year}-${month}-${day} ${hour}:${min}:${second}`
+    }
+
+    function UTCformat(timeStamp) {
+      const date = new Date(timeStamp)
+      const year = date.getUTCFullYear()
+      const month = String((date.getUTCMonth() + 1)).padStart(2, '0')
+      const day = String(date.getUTCDate()).padStart(2, '0')
+      const hour = pad(date.getUTCHours())
+      const min = pad(date.getMinutes())
+      const second = pad(date.getSeconds())
+      return `${year}-${month}-${day} ${hour}:${min}:${second}`
+    }
+
+    function init() {
+      const now = Date.now()
+      document.getElementById('now').innerHTML = format(now)
+      document.getElementById('origin-input').value = format(now)
+      document.getElementById('utc-now').innerHTML = UTCformat(now)
+      const offset = new Date().getTimezoneOffset()
+      document.getElementById('origin-region').value = offset < 0 ? 'E' : 'W'
+      document.getElementById('origin-zone').value = String(Math.abs(offset / 60))
+    }
+
+    function getFormData() {
+      const data = {}
+      data.origin = document.getElementById('origin-input').value.trim()
+      data.originRegion = document.getElementById('origin-region').value
+      data.originZone = document.getElementById('origin-zone').value
+      data.region = document.getElementById('region').value
+      data.zone = document.getElementById('zone').value
+      return data
+    }
+
+    function run() {
+      const data = getFormData()
+      const originDate = new Date(`${data.origin} GMT${data.originRegion === 'W' ? '-' : '+'}${pad(data.originZone)}00`)
+      let stamp = +originDate
+      stamp += (originDate.getTimezoneOffset() * 60 * 1000)
+      const gap = data.zone * 60 * 60 * 1000
+      if (data.region === 'E') {
+        stamp += gap
+      } else {
+        stamp -= gap
+      }
+      document.getElementById('onput').value = format(new Date(stamp))
+    }
+    init()
+  </script>
+</body>
+
+</html>
